@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Gallery - Momenta{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <p class="section-subtitle">Moments We've Created</p>
+      <h2 class="section-title">Gallery</h2>
+    </div>
+    <div class="row g-3">
+      {% for img in images %}
+      <div class="col-md-3 col-6">
+        <div class="gallery-thumb"><img src="{{ img.image_path }}" alt="{{ img.title or 'Event' }}"></div>
+      </div>
+      {% else %}
+        {% for url in ['1519741497674-611481863552','1464366400600-7168b8af9bc3','1478146059778-26028b07395a','1511578314322-379afb476865','1527529482837-4698179dc6ce','1414235077428-338989a2e8c0','1469371670807-013ccf25f16a','1543007630-9710e4a00a20','1519167758481-83f550bb49b3','1511795409834-ef04bbd61622','1505236858219-8359eb29e232','1470229722913-7c0e2dbbafd3'] %}
+        <div class="col-md-3 col-6">
+          <div class="gallery-thumb"><img src="https://images.unsplash.com/photo-{{ url }}?auto=format&fit=crop&w=500&q=70" alt="Event"></div>
+        </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

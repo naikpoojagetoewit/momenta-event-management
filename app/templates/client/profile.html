@@ -1,0 +1,61 @@
+{% extends 'dashboard_base.html' %}
+{% set dashboard_title = 'Client Panel' %}
+{% block title %}My Profile - Momenta{% endblock %}
+
+{% block sidebar_links %}
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.book_event') }}"><i class="fa-solid fa-calendar-plus me-2"></i>Book Event</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.my_bookings') }}"><i class="fa-solid fa-list-check me-2"></i>My Bookings</a></li>
+<li class="nav-item"><a class="nav-link active" href="{{ url_for('client.profile') }}"><i class="fa-solid fa-user me-2"></i>Profile</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+{% endblock %}
+
+{% block dashboard_content %}
+<h3 class="mb-4">My Profile</h3>
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card stat-card p-4">
+            <h5 class="mb-3">Edit Profile</h5>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ current_user.name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" value="{{ current_user.email }}" disabled>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone" class="form-control" value="{{ current_user.phone or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    <textarea name="address" class="form-control">{{ current_user.address or '' }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-brand rounded-pill px-4">Save Changes</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card stat-card p-4">
+            <h5 class="mb-3">Change Password</h5>
+            <form method="POST" action="{{ url_for('client.change_password') }}">
+                <div class="mb-3">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" name="current_password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">New Password</label>
+                    <input type="password" name="new_password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" name="confirm_password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-outline-brand rounded-pill px-4">Update Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

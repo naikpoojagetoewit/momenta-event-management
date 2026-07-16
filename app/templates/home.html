@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}Momenta - Creating Moments That Matter{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="hero-section text-center">
+    <div class="container">
+        <span class="badge bg-white text-dark-purple px-3 py-2 mb-3" style="color:var(--momenta-primary)">✨ India's Trusted Event Partner</span>
+        <h1 class="mb-3">Creating Moments <span class="text-gold">That Matter</span></h1>
+        <p class="lead mb-4 mx-auto" style="max-width:640px;">
+            From intimate baby showers to grand weddings and corporate conferences - Momenta plans,
+            manages and delivers unforgettable events, end to end.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            {% if current_user.is_authenticated and current_user.role == 'client' %}
+                <a href="{{ url_for('client.book_event') }}" class="btn btn-brand btn-lg rounded-pill px-4">Book Your Event</a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-brand btn-lg rounded-pill px-4">Book Your Event</a>
+            {% endif %}
+            <a href="{{ url_for('main.services') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">Explore Services</a>
+        </div>
+    </div>
+</section>
+
+<!-- About -->
+<section class="py-5 py-lg-6" id="about">
+    <div class="container py-4">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=900&q=80"
+                     class="img-fluid rounded-4 shadow" alt="Momenta events">
+            </div>
+            <div class="col-lg-6">
+                <p class="section-subtitle">About Momenta</p>
+                <h2 class="section-title mb-3">Your One-Stop Event Planning Platform</h2>
+                <p class="text-muted">Momenta brings together decoration, catering, photography, entertainment
+                    and venue teams on a single platform - so you can plan a flawless event without juggling
+                    a dozen vendors.</p>
+                <div class="row g-3 mt-2">
+                    <div class="col-sm-6">
+                        <h6><i class="fa-solid fa-bullseye text-brand me-2" style="color:var(--momenta-primary)"></i> Our Mission</h6>
+                        <p class="text-muted small">Make world-class event planning accessible, transparent and stress-free.</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <h6><i class="fa-solid fa-eye text-brand me-2" style="color:var(--momenta-primary)"></i> Our Vision</h6>
+                        <p class="text-muted small">To be the most trusted event partner for every celebration in India.</p>
+                    </div>
+                </div>
+                <ul class="list-unstyled mt-3">
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-success me-2"></i> Verified vendors & dedicated event managers</li>
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-success me-2"></i> Transparent, AI-assisted budget estimation</li>
+                    <li class="mb-2"><i class="fa-solid fa-circle-check text-success me-2"></i> Real-time booking &amp; progress tracking</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services -->
+<section class="py-5 bg-blush" id="services">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <p class="section-subtitle">What We Offer</p>
+            <h2 class="section-title">Our Services</h2>
+        </div>
+        <div class="row g-4">
+            {% for s in services %}
+            <div class="col-md-4">
+                <div class="service-card card">
+                    <img src="https://images.unsplash.com/photo-{{ ['1464366400600-7168b8af9bc3','1519671482749-fd09be7ccebf','1470229722913-7c0e2dbbafd3','1511578314322-379afb476865','1527529482837-4698179dc6ce','1533174072545-7a4b6ad7a6c3','1546069901-ba9599a7e63c','1519167758481-83f550bb49b3','1414235077428-338989a2e8c0'][loop.index0 % 9] }}?auto=format&fit=crop&w=500&q=70"
+                         class="card-img-top" alt="{{ s.service_name }}">
+                    <div class="card-body">
+                        <span class="category-pill mb-2">{{ s.category }}</span>
+                        <h5 class="card-title mt-2">{{ s.service_name }}</h5>
+                        <p class="card-text text-muted small">{{ s.description or 'Professional service tailored to your event.' }}</p>
+                        <p class="fw-bold mb-0" style="color:var(--momenta-primary)">₹{{ '{:,.0f}'.format(s.price) }} <span class="text-muted fw-normal small">/ {{ s.unit }}</span></p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-center text-muted">Services will appear here once the admin adds them (run seed.py).</p>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.services') }}" class="btn btn-outline-brand rounded-pill px-4">View All Services</a>
+        </div>
+    </div>
+</section>
+
+<!-- Event Categories -->
+<section class="py-5" id="events">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <p class="section-subtitle">Celebrate With Us</p>
+            <h2 class="section-title">Event Categories</h2>
+        </div>
+        <div class="row g-4">
+            {% for e in events %}
+            <div class="col-md-4 col-lg-3">
+                <div class="event-card card">
+                    <img src="https://images.unsplash.com/photo-{{ ['1519741497674-611481863552','1464366400600-7168b8af9bc3','1478146059778-26028b07395a','1511578314322-379afb476865','1527529482837-4698179dc6ce','1414235077428-338989a2e8c0','1469371670807-013ccf25f16a','1543007630-9710e4a00a20'][loop.index0 % 8] }}?auto=format&fit=crop&w=500&q=70"
+                         class="card-img-top" alt="{{ e.event_name }}">
+                    <div class="card-body">
+                        <span class="category-pill mb-2">{{ e.category }}</span>
+                        <h6 class="card-title mt-2 mb-1">{{ e.event_name }}</h6>
+                        <p class="text-muted small mb-0">Starting ₹{{ '{:,.0f}'.format(e.base_price) }}</p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-center text-muted">Event categories will appear here once seeded.</p>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.events') }}" class="btn btn-outline-brand rounded-pill px-4">See All Events</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-5 bg-blush">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <p class="section-subtitle">Happy Clients</p>
+            <h2 class="section-title">What People Say</h2>
+        </div>
+        <div class="row g-4">
+            {% for t in testimonials %}
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="stars mb-2">
+                        {% for i in range(t.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                    </div>
+                    <p class="text-muted">"{{ t.comments or 'A wonderful experience end to end!' }}"</p>
+                    <p class="fw-bold mb-0">- {{ t.user.name }}</p>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-center text-muted">Client testimonials will show up here as feedback comes in.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Gallery -->
+<section class="py-5" id="gallery">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <p class="section-subtitle">Moments We've Created</p>
+            <h2 class="section-title">Gallery</h2>
+        </div>
+        <div class="row g-3">
+            {% for img in gallery_images %}
+            <div class="col-md-3 col-6">
+                <div class="gallery-thumb">
+                    <img src="{{ img.image_path }}" alt="{{ img.title or 'Event' }}">
+                </div>
+            </div>
+            {% else %}
+                {% for url in ['1519741497674-611481863552','1464366400600-7168b8af9bc3','1478146059778-26028b07395a','1511578314322-379afb476865','1527529482837-4698179dc6ce','1414235077428-338989a2e8c0','1469371670807-013ccf25f16a','1543007630-9710e4a00a20'] %}
+                <div class="col-md-3 col-6">
+                    <div class="gallery-thumb">
+                        <img src="https://images.unsplash.com/photo-{{ url }}?auto=format&fit=crop&w=500&q=70" alt="Event">
+                    </div>
+                </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.gallery') }}" class="btn btn-outline-brand rounded-pill px-4">View Full Gallery</a>
+        </div>
+    </div>
+</section>
+
+<!-- Contact -->
+<section class="py-5 bg-blush" id="contact">
+    <div class="container py-4">
+        <div class="row gy-4">
+            <div class="col-lg-5">
+                <p class="section-subtitle">Get In Touch</p>
+                <h2 class="section-title mb-4">Contact Us</h2>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><i class="fa-solid fa-phone me-2" style="color:var(--momenta-primary)"></i> +91 90000 00000</li>
+                    <li class="mb-3"><i class="fa-solid fa-envelope me-2" style="color:var(--momenta-primary)"></i> support@momenta.com</li>
+                    <li class="mb-3"><i class="fa-solid fa-location-dot me-2" style="color:var(--momenta-primary)"></i> Momenta HQ, MG Road, Bengaluru, Karnataka, India</li>
+                </ul>
+            </div>
+            <div class="col-lg-7">
+                <form method="POST" action="{{ url_for('main.contact') }}" class="bg-white rounded-4 shadow-sm p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="email" name="email" class="form-control" placeholder="Your Email" required>
+                        </div>
+                        <div class="col-12">
+                            <input type="text" name="subject" class="form-control" placeholder="Subject">
+                        </div>
+                        <div class="col-12">
+                            <textarea name="message" rows="4" class="form-control" placeholder="Your Message" required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-brand rounded-pill px-4">Send Message</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

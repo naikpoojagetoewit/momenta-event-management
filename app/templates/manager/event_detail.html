@@ -1,0 +1,70 @@
+{% extends 'dashboard_base.html' %}
+{% set dashboard_title = 'Event Manager' %}
+{% block title %}Manage Event #{{ booking.booking_id }} - Momenta{% endblock %}
+{% block sidebar_links %}
+<li class="nav-item"><a class="nav-link" href="{{ url_for('manager.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+{% endblock %}
+{% block dashboard_content %}
+<h3 class="mb-4">Event #{{ booking.booking_id }} - {{ booking.event_type.event_name }}</h3>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card stat-card p-4 mb-4">
+      <h5 class="mb-3">Client &amp; Event Details</h5>
+      <p class="mb-1"><strong>Client:</strong> {{ booking.client.name }} ({{ booking.client.phone }})</p>
+      <p class="mb-1"><strong>Date:</strong> {{ booking.event_date }} {{ booking.event_time or '' }}</p>
+      <p class="mb-1"><strong>Guests:</strong> {{ booking.guest_count }}</p>
+      <p class="mb-1"><strong>Venue:</strong> {{ booking.venue or '-' }}</p>
+      <p class="mb-1"><strong>Address:</strong> {{ [booking.house_no, booking.street, booking.city, booking.state, booking.pincode]|select|join(', ') }}</p>
+      {% if booking.description %}<p class="mb-0"><strong>Notes:</strong> {{ booking.description }}</p>{% endif %}
+    </div>
+    <div class="card stat-card p-4 mb-4">
+      <h5 class="mb-3">Services</h5>
+      <ul class="list-group list-group-flush">
+        {% for s in booking.services %}
+        <li class="list-group-item px-0">{{ s.service_name }} <small class="text-muted">({{ s.category }})</small></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="card stat-card p-4">
+      <h5 class="mb-3">Assigned Tasks</h5>
+      {% if booking.tasks %}
+      <ul class="list-group list-group-flush">
+        {% for t in booking.tasks %}
+        <li class="list-group-item px-0 d-flex justify-content-between">
+          <span>{{ t.member.name }} ({{ t.member.role }}) - {{ t.task_description or 'General task' }}</span>
+          <span class="badge bg-secondary">{{ t.task_status }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted">No tasks assigned yet.</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card stat-card p-4 mb-4">
+      <h6 class="mb-3">Update Event Stage</h6>
+      <form method="POST">
+        <input type="hidden" name="action" value="update_stage">
+        <select class="form-select mb-3" name="manager_stage">
+          {% for s in stages %}<option value="{{ s }}" {{ 'selected' if booking.manager_stage==s }}>{{ s }}</option>{% endfor %}
+        </select>
+        <button class="btn btn-brand w-100 rounded-pill">Update Status</button>
+      </form>
+    </div>
+    <div class="card stat-card p-4">
+      <h6 class="mb-3">Assign Team Member</h6>
+      <form method="POST">
+        <input type="hidden" name="action" value="assign_task">
+        <select class="form-select mb-2" name="member_id" required>
+          <option value="">Select team member</option>
+          {% for m in team_members %}<option value="{{ m.member_id }}">{{ m.name }} ({{ m.role }})</option>{% endfor %}
+        </select>
+        <input type="text" class="form-control mb-3" name="task_description" placeholder="Task description">
+        <button class="btn btn-outline-brand w-100 rounded-pill">Assign Task</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

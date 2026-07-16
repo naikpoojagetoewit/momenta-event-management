@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us - Momenta{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container py-4">
+    <div class="row gy-4">
+      <div class="col-lg-5">
+        <p class="section-subtitle">Get In Touch</p>
+        <h2 class="section-title mb-4">Contact Us</h2>
+        <ul class="list-unstyled">
+          <li class="mb-3"><i class="fa-solid fa-phone me-2" style="color:var(--momenta-primary)"></i> +91 90000 00000</li>
+          <li class="mb-3"><i class="fa-solid fa-envelope me-2" style="color:var(--momenta-primary)"></i> support@momenta.com</li>
+          <li class="mb-3"><i class="fa-solid fa-location-dot me-2" style="color:var(--momenta-primary)"></i> Momenta HQ, MG Road, Bengaluru, Karnataka, India</li>
+        </ul>
+      </div>
+      <div class="col-lg-7">
+        <form method="POST" class="bg-white rounded-4 shadow-sm p-4">
+          <div class="row g-3">
+            <div class="col-md-6"><input type="text" name="name" class="form-control" placeholder="Your Name" required></div>
+            <div class="col-md-6"><input type="email" name="email" class="form-control" placeholder="Your Email" required></div>
+            <div class="col-12"><input type="text" name="subject" class="form-control" placeholder="Subject"></div>
+            <div class="col-12"><textarea name="message" rows="4" class="form-control" placeholder="Your Message" required></textarea></div>
+            <div class="col-12"><button type="submit" class="btn btn-brand rounded-pill px-4">Send Message</button></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

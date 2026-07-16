@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Services - Momenta{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container py-4">
+    <div class="text-center mb-5">
+      <p class="section-subtitle">What We Offer</p>
+      <h2 class="section-title">Our Services</h2>
+    </div>
+    {% for category, items in grouped.items() %}
+    <h4 class="mb-3" style="color:var(--momenta-primary)">{{ category }}</h4>
+    <div class="row g-4 mb-5">
+      {% for s in items %}
+      <div class="col-md-4">
+        <div class="service-card card">
+          <div class="card-body">
+            {% if s.tier %}<span class="category-pill mb-2">{{ s.tier }}</span>{% endif %}
+            <h5 class="card-title mt-2">{{ s.service_name }}</h5>
+            <p class="card-text text-muted small">{{ s.description or 'Professional service tailored to your event.' }}</p>
+            <p class="fw-bold mb-0" style="color:var(--momenta-primary)">₹{{ '{:,.0f}'.format(s.price) }} <span class="text-muted fw-normal small">/ {{ s.unit }}</span></p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-muted">No services yet - run seed.py to populate sample data.</p>
+    {% endfor %}
+    <div class="text-center">
+      <a href="{{ url_for('auth.register') }}" class="btn btn-brand rounded-pill px-4">Book a Service</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

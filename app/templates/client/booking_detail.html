@@ -1,0 +1,74 @@
+{% extends 'dashboard_base.html' %}
+{% set dashboard_title = 'Client Panel' %}
+{% block title %}Booking #{{ booking.booking_id }} - Momenta{% endblock %}
+
+{% block sidebar_links %}
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.book_event') }}"><i class="fa-solid fa-calendar-plus me-2"></i>Book Event</a></li>
+<li class="nav-item"><a class="nav-link active" href="{{ url_for('client.my_bookings') }}"><i class="fa-solid fa-list-check me-2"></i>My Bookings</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.profile') }}"><i class="fa-solid fa-user me-2"></i>Profile</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Booking #{{ booking.booking_id }}</h3>
+    <span class="badge badge-status-{{ booking.status.replace(' ','_') }} fs-6">{{ booking.status }}</span>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card stat-card p-4 mb-4">
+            <h5 class="mb-3">Event Details</h5>
+            <p class="mb-1"><strong>Event:</strong> {{ booking.event_type.event_name }}</p>
+            <p class="mb-1"><strong>Date:</strong> {{ booking.event_date }} {{ booking.event_time or '' }}</p>
+            <p class="mb-1"><strong>Guests:</strong> {{ booking.guest_count }}</p>
+            <p class="mb-1"><strong>Venue:</strong> {{ booking.venue or '-' }}</p>
+            <p class="mb-1"><strong>Address:</strong> {{ [booking.house_no, booking.street, booking.city, booking.state, booking.pincode]|select|join(', ') }}</p>
+            {% if booking.description %}<p class="mb-1"><strong>Notes:</strong> {{ booking.description }}</p>{% endif %}
+            {% if booking.manager %}<p class="mb-0"><strong>Event Manager:</strong> {{ booking.manager.name }}</p>{% endif %}
+        </div>
+
+        <div class="card stat-card p-4 mb-4">
+            <h5 class="mb-3">Services Booked</h5>
+            <ul class="list-group list-group-flush">
+                {% for s in booking.services %}
+                <li class="list-group-item d-flex justify-content-between px-0">
+                    <span>{{ s.service_name }} <small class="text-muted">({{ s.category }})</small></span>
+                    <span class="fw-bold">₹{{ '{:,.0f}'.format(s.price) }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="d-flex justify-content-between mt-3 pt-3 border-top">
+                <strong>Total</strong>
+                <strong style="color:var(--momenta-primary)">₹{{ '{:,.0f}'.format(booking.total_amount) }}</strong>
+            </div>
+        </div>
+
+        <div class="card stat-card p-4">
+            <h5 class="mb-3">Progress Tracking</h5>
+            <p class="mb-2"><span class="badge badge-status-{{ booking.status.replace(' ','_') }}">{{ booking.status }}</span></p>
+            <p class="text-muted small mb-0">Current stage: <strong>{{ booking.manager_stage }}</strong></p>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card stat-card p-4 mb-3">
+            <h6 class="mb-3">Actions</h6>
+            {% if booking.status == 'Pending' %}
+            <a href="{{ url_for('client.payment', booking_id=booking.booking_id) }}" class="btn btn-brand w-100 rounded-pill mb-2">Pay Now</a>
+            {% endif %}
+            {% if booking.payments %}
+            <a href="{{ url_for('client.download_invoice', booking_id=booking.booking_id) }}" class="btn btn-outline-brand w-100 rounded-pill mb-2">Download Invoice</a>
+            {% endif %}
+            {% if booking.status == 'Completed' %}
+                {% if booking.feedback %}
+                <p class="text-muted small mb-0">You've already rated this event.</p>
+                {% else %}
+                <a href="{{ url_for('client.feedback', booking_id=booking.booking_id) }}" class="btn btn-outline-brand w-100 rounded-pill">Leave Feedback</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

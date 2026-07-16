@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-2 sidebar py-4 px-3">
+            <h6 class="text-uppercase text-white-50 small mb-3 px-2">{{ dashboard_title }}</h6>
+            <ul class="nav nav-pills flex-column">
+                {% block sidebar_links %}{% endblock %}
+            </ul>
+        </div>
+        <div class="col-lg-10 py-4 px-4">
+            {% block dashboard_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

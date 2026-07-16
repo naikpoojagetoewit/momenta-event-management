@@ -1,0 +1,117 @@
+{% extends 'dashboard_base.html' %}
+{% set dashboard_title = 'Client Panel' %}
+{% block title %}Book Event - Momenta{% endblock %}
+
+{% block sidebar_links %}
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link active" href="{{ url_for('client.book_event') }}"><i class="fa-solid fa-calendar-plus me-2"></i>Book Event</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.my_bookings') }}"><i class="fa-solid fa-list-check me-2"></i>My Bookings</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.profile') }}"><i class="fa-solid fa-user me-2"></i>Profile</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+{% endblock %}
+
+{% block dashboard_content %}
+<h3 class="mb-1">Book Your Event</h3>
+<p class="text-muted mb-4">Fill in your event details, pick your services and see live pricing.</p>
+
+<form method="POST" id="bookingForm">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card stat-card p-4 mb-4">
+                <h5 class="mb-3">Event Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Event Type</label>
+                        <select name="event_id" id="event_id" class="form-select" required>
+                            <option value="">Select event type</option>
+                            {% for e in events %}
+                            <option value="{{ e.event_id }}">{{ e.event_name }} ({{ e.category }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Event Date</label>
+                        <input type="date" name="event_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Event Time</label>
+                        <input type="time" name="event_time" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Number of Guests</label>
+                        <input type="number" min="1" name="guest_count" id="guest_count" class="form-control" required>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Venue Name / Description</label>
+                        <input type="text" name="venue" class="form-control" placeholder="e.g. Grand Palace Banquet Hall">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card stat-card p-4 mb-4">
+                <h5 class="mb-3">Address Details</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">House Number</label>
+                        <input type="text" name="house_no" class="form-control">
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Street</label>
+                        <input type="text" name="street" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">State</label>
+                        <input type="text" name="state" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Pincode</label>
+                        <input type="text" name="pincode" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card stat-card p-4 mb-4">
+                <h5 class="mb-3">Select Services</h5>
+                {% for category, items in grouped_services.items() %}
+                <h6 class="text-muted mt-3">{{ category }}</h6>
+                <div class="row g-2 mb-2">
+                    {% for s in items %}
+                    <div class="col-md-6">
+                        <label class="service-select-card d-flex justify-content-between align-items-center mb-2">
+                            <span>
+                                <input type="checkbox" class="service-checkbox form-check-input me-2" name="service_ids" value="{{ s.service_id }}">
+                                {{ s.service_name }} {% if s.tier %}<small class="text-muted">({{ s.tier }})</small>{% endif %}
+                            </span>
+                            <span class="fw-bold small">₹{{ '{:,.0f}'.format(s.price) }}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="card stat-card p-4 mb-4">
+                <h5 class="mb-3">Special Requirements</h5>
+                <textarea name="description" rows="3" class="form-control" placeholder="Any special instructions for your event..."></textarea>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="budget-box">
+                <h6 class="text-white-50 text-uppercase small mb-2">Budget Calculator</h6>
+                <p class="mb-1 small text-white-50">Estimated Total</p>
+                <div class="amount" id="exactTotal">₹ 0</div>
+                <hr class="border-secondary">
+                <p class="mb-1 small text-white-50">AI Suggested Budget Range</p>
+                <p class="mb-0" id="aiRange">₹ 0 - ₹ 0</p>
+                <hr class="border-secondary">
+                <button type="submit" class="btn btn-brand w-100 rounded-pill py-2 mt-2">Proceed to Payment</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

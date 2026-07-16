@@ -1,0 +1,70 @@
+{% extends 'dashboard_base.html' %}
+{% set dashboard_title = 'Client Panel' %}
+{% block title %}My Dashboard - Momenta{% endblock %}
+
+{% block sidebar_links %}
+<li class="nav-item"><a class="nav-link active" href="{{ url_for('client.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.book_event') }}"><i class="fa-solid fa-calendar-plus me-2"></i>Book Event</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.my_bookings') }}"><i class="fa-solid fa-list-check me-2"></i>My Bookings</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.profile') }}"><i class="fa-solid fa-user me-2"></i>Profile</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+{% endblock %}
+
+{% block dashboard_content %}
+<h3 class="mb-1">Welcome, {{ current_user.name.split(' ')[0] }} 👋</h3>
+<p class="text-muted mb-4">Here's an overview of your events with Momenta.</p>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card p-3 d-flex flex-row align-items-center gap-3">
+            <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <div><h4 class="mb-0">{{ stats.total }}</h4><small class="text-muted">Total Bookings</small></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 d-flex flex-row align-items-center gap-3">
+            <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div><h4 class="mb-0">{{ stats.pending }}</h4><small class="text-muted">Pending</small></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 d-flex flex-row align-items-center gap-3">
+            <div class="stat-icon"><i class="fa-solid fa-spinner"></i></div>
+            <div><h4 class="mb-0">{{ stats.active }}</h4><small class="text-muted">Active</small></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card p-3 d-flex flex-row align-items-center gap-3">
+            <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div><h4 class="mb-0">{{ stats.completed }}</h4><small class="text-muted">Completed</small></div>
+        </div>
+    </div>
+</div>
+
+<div class="card stat-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Recent Bookings</h5>
+        <a href="{{ url_for('client.book_event') }}" class="btn btn-brand btn-sm rounded-pill">+ New Booking</a>
+    </div>
+    {% if bookings %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Event</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            {% for b in bookings %}
+                <tr>
+                    <td>{{ b.event_type.event_name }}</td>
+                    <td>{{ b.event_date }}</td>
+                    <td>₹{{ '{:,.0f}'.format(b.total_amount) }}</td>
+                    <td><span class="badge badge-status-{{ b.status.replace(' ','_') }}">{{ b.status }}</span></td>
+                    <td><a href="{{ url_for('client.booking_detail', booking_id=b.booking_id) }}" class="btn btn-sm btn-outline-brand">View</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">You haven't booked any events yet. <a href="{{ url_for('client.book_event') }}">Book your first event</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}

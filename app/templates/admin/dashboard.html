@@ -1,0 +1,101 @@
+{% extends 'dashboard_base.html' %}
+{% set dashboard_title = 'Admin Panel' %}
+{% block title %}Admin Dashboard - Momenta{% endblock %}
+
+{% block sidebar_links %}
+<li class="nav-item"><a class="nav-link active" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.users') }}"><i class="fa-solid fa-users me-2"></i>Users</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.events') }}"><i class="fa-solid fa-calendar-days me-2"></i>Events</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.services') }}"><i class="fa-solid fa-concierge-bell me-2"></i>Services</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.bookings') }}"><i class="fa-solid fa-list-check me-2"></i>Bookings</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.team') }}"><i class="fa-solid fa-people-group me-2"></i>Team</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.reports') }}"><i class="fa-solid fa-chart-line me-2"></i>Reports</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+{% endblock %}
+
+{% block dashboard_content %}
+<h3 class="mb-4">Admin Overview</h3>
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card stat-card p-3 d-flex flex-row align-items-center gap-3">
+        <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+        <div><h4 class="mb-0">{{ total_users }}</h4><small class="text-muted">Total Users</small></div>
+    </div></div>
+    <div class="col-md-3"><div class="card stat-card p-3 d-flex flex-row align-items-center gap-3">
+        <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+        <div><h4 class="mb-0">{{ total_events }}</h4><small class="text-muted">Total Events</small></div>
+    </div></div>
+    <div class="col-md-3"><div class="card stat-card p-3 d-flex flex-row align-items-center gap-3">
+        <div class="stat-icon"><i class="fa-solid fa-list-check"></i></div>
+        <div><h4 class="mb-0">{{ total_bookings }}</h4><small class="text-muted">Total Bookings</small></div>
+    </div></div>
+    <div class="col-md-3"><div class="card stat-card p-3 d-flex flex-row align-items-center gap-3">
+        <div class="stat-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+        <div><h4 class="mb-0">₹{{ '{:,.0f}'.format(total_revenue) }}</h4><small class="text-muted">Total Revenue</small></div>
+    </div></div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="card stat-card p-4">
+            <h6 class="mb-3">Revenue Trend</h6>
+            <canvas id="revenueChart" height="120"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card stat-card p-4">
+            <h6 class="mb-3">Popular Events</h6>
+            <canvas id="popularChart" height="120"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="card stat-card p-4">
+    <h6 class="mb-3">Recent Bookings</h6>
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>#</th><th>Client</th><th>Event</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+            {% for b in recent_bookings %}
+            <tr>
+                <td>{{ b.booking_id }}</td>
+                <td>{{ b.client.name }}</td>
+                <td>{{ b.event_type.event_name }}</td>
+                <td>{{ b.event_date }}</td>
+                <td><span class="badge badge-status-{{ b.status.replace(' ','_') }}">{{ b.status }}</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+        labels: {{ revenue_labels|tojson }},
+        datasets: [{
+            label: 'Revenue (₹)',
+            data: {{ revenue_values|tojson }},
+            borderColor: '#7B2D8E',
+            backgroundColor: 'rgba(123,45,142,0.15)',
+            fill: true, tension: 0.3
+        }]
+    },
+    options: { plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('popularChart'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ popular_labels|tojson }},
+        datasets: [{
+            data: {{ popular_values|tojson }},
+            backgroundColor: ['#7B2D8E','#B44FA3','#D4AF37','#5A1F68','#F0AD4E']
+        }]
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'dashboard_base.html' %}
+{% set dashboard_title = 'Client Panel' %}
+{% block title %}Leave Feedback - Momenta{% endblock %}
+
+{% block sidebar_links %}
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.dashboard') }}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.book_event') }}"><i class="fa-solid fa-calendar-plus me-2"></i>Book Event</a></li>
+<li class="nav-item"><a class="nav-link active" href="{{ url_for('client.my_bookings') }}"><i class="fa-solid fa-list-check me-2"></i>My Bookings</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('client.profile') }}"><i class="fa-solid fa-user me-2"></i>Profile</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a></li>
+{% endblock %}
+
+{% block dashboard_content %}
+<h3 class="mb-4">Rate Your Event</h3>
+<div class="card stat-card p-4" style="max-width:500px;">
+    <p class="text-muted">{{ booking.event_type.event_name }} - {{ booking.event_date }}</p>
+    <form method="POST">
+        <label class="form-label d-block">Your Rating</label>
+        <div class="star-rating fs-2 mb-3">
+            {% for i in range(1,6) %}
+            <i class="fa-regular fa-star" data-value="{{ i }}" style="cursor:pointer; color:var(--momenta-gold);"></i>
+            {% endfor %}
+        </div>
+        <input type="hidden" name="rating" id="ratingInput" value="5">
+        <div class="mb-3">
+            <label class="form-label">Comments</label>
+            <textarea name="comments" rows="4" class="form-control" placeholder="Tell us about your experience..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-brand rounded-pill px-4">Submit Feedback</button>
+    </form>
+</div>
+{% endblock %}

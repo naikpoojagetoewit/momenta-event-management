@@ -8,6 +8,23 @@ budget calculator, simulated online payments, PDF invoices, and progress trackin
 
 ---
 
+## 🔗 Live Demo
+
+**Try it live:** https://momenta-event-management.onrender.com
+
+⏳ *Note: hosted on a free tier, so the first load may take ~30–50 seconds while the server wakes up. Thanks for your patience!*
+
+### Demo Logins
+
+| Role          | Email                | Password    |
+|---------------|-----------------------|-------------|
+| Admin         | admin@momenta.com     | admin123    |
+| Event Manager | manager@momenta.com   | manager123  |
+| Team Member   | team@momenta.com      | team123     |
+| Client        | client@momenta.com    | client123   |
+
+---
+
 ## 1. Requirements
 
 - Python 3.10+
@@ -125,13 +142,28 @@ models, utils) is set up so each can be extended without restructuring:
 - Heavier ML budget model → train a scikit-learn model offline and load it
   in `utils/budget.py` in place of `predict_budget_ai()`.
 
-## 7. Common Issues
+## 7. Deployment
+
+This project is deployed on [Render](https://render.com) using:
+
+- **Build Command:** `pip install -r requirements.txt`
+- **Start Command:** `gunicorn run:app`
+- **Instance Type:** Free
+
+Since Render's free tier uses an ephemeral filesystem, the SQLite database is
+reset on redeploys. For a production deployment intended to persist real data,
+switch to a managed PostgreSQL database (see Section 4) and set `DATABASE_URL`
+as an environment variable on Render instead of relying on the local `.env` file.
+
+## 8. Common Issues
 
 - **"ModuleNotFoundError"** → make sure your virtual environment is activated
   and `pip install -r requirements.txt` completed without errors.
 - **psycopg2 install fails** → you likely don't need PostgreSQL; just leave
   `DATABASE_URL` unset in `.env` to use SQLite.
 - **Port already in use** → change the port in `run.py` (`app.run(port=5001)`).
+- **"gunicorn: command not found" on deploy** → make sure `gunicorn` is listed
+  in `requirements.txt` and has been pushed to the branch your host deploys from.
 
 ---
 
